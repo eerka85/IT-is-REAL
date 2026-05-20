@@ -63,7 +63,7 @@ int tisk_soub(){
     char radek[60];
     int u = 0;
     printf("\n\n%%%%%%%% TISK SOUBORU %%%%%%%%\n");
-    FILE * soubor = fopen("C:/Users/Honza Stehlik/Desktop/IT is REAL/data.txt", "r");
+    FILE * soubor = fopen("C:/Users/Honza Stehlik/Desktop/IT is REAL/soub_p_1/data.txt", "r");
     if(soubor == NULL){
         return 1;
     }
