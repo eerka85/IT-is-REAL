@@ -27,7 +27,7 @@ int main(){
     int velikost = sizeof(blud[1]);
     int control = kresli_do_soub(blud, velikost);
     if(control != 0){
-        perror("jses fakt pica");
+        perror("jses fakt nehezky clovek");
         return 1;
     } 
     
