@@ -30,31 +30,33 @@ int input_int(int min, int max, char vypis[]) {
 }
 int change_pos_B(int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X], int vel_BY, int vel_BX, int *poz_BY, int *poz_BX){
     pole[*poz_BY + vel_BY][*poz_BX + vel_BX] = 'O';
-    pole[*poz_BY][*poz_BX] = '#';
+    pole[*poz_BY][*poz_BX] = ' ';
     *poz_BY = *poz_BY + vel_BY;
     *poz_BX = *poz_BX + vel_BX;
 }
 void print_pole(char hastag_string[], int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X], int poz_BY){
+    printf("%s", hastag_string);
     for(int i = 0; i< velikost_Y; i++){
         if(i == poz_BY){
             for(int j = 0; j< velikost_X; j++){
                 if(pole[i][j] == 'O'){
-                    printf(RED BOLD "%c" RESET, pole[i][j]);
+                    printf(RED BOLD "O" RESET);
                 }
                 else{
-                    printf("%c", pole[i][j]);
+                    printf(" ");
                 }
             }
         }
         else{
-            printf("%s", hastag_string);
+            printf("\n");
         }
-        printf("\n");
     }
+    printf("%s", hastag_string);
 }
 int main(){
+    int koeficient_rozmeru_X = 3;
     int velikost_Y = input_int(1, 2700000, "velikost pole: ");
-    int velikost_X = velikost_Y * 2;
+    int velikost_X = velikost_Y * koeficient_rozmeru_X;
     char pole[velikost_Y][velikost_X];
 
     int poz_BY = velikost_Y / 2;
@@ -69,7 +71,7 @@ int main(){
     }
     hastag_string[velikost_X] = '\0';
 
-    //vynulovani pole na #
+    //vynulovani pole na  
     for(int i = 0; i< velikost_Y; i++){
         for(int j = 0; j< velikost_X; j++){
             pole[i][j] = '#';
@@ -85,7 +87,6 @@ int main(){
             vel_BX = vel_BX * (-1);
         }
         change_pos_B(velikost_Y, velikost_X, pole, vel_BY, vel_BX, &poz_BY, &poz_BX);
-        Sleep(20);
         del_screen();
     }//main while ig
 
