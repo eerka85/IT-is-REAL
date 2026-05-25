@@ -11,7 +11,10 @@ void clean_buffer(){
     while((c = getchar()) != '\n' && c != EOF){}
 }
 void del_screen(){
-	system("cls");
+	COORD cursorPosition;// ts is highkey ai
+    cursorPosition.X = 0;
+    cursorPosition.Y = 0;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPosition);
 }
 int input_int(int min, int max, char vypis[]) {
 	int tmp = 0;
@@ -34,28 +37,36 @@ int change_pos_B(int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_
     *poz_BY = *poz_BY + vel_BY;
     *poz_BX = *poz_BX + vel_BX;
 }
-void print_pole(char hastag_string[], int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X], int poz_BY){
-    printf("%s", hastag_string);
-    for(int i = 0; i< velikost_Y; i++){
-        if(i == poz_BY){
-            for(int j = 0; j< velikost_X; j++){
-                if(pole[i][j] == 'O'){
-                    printf(RED BOLD "O" RESET);
-                }
-                else{
-                    printf(" ");
-                }
-            }
+void print_pole(int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]){
+    // 1. Print Top Border
+    for(int i = 0; i < velikost_X + 2; i++) printf("#");
+    printf("\n");
+
+    // 2. Print Grid
+    for(int i = 0; i < velikost_Y; i++){
+        printf("#"); // Left wall
+        for(int j = 0; j < velikost_X; j++){
+            if(pole[i][j] == 'O') printf(RED BOLD "O" RESET);
+            else printf(" ");
         }
-        else{
-            printf("\n");
-        }
+        printf("#\n"); // Right wall
     }
-    printf("%s", hastag_string);
+
+    // 3. Print Bottom Border
+    for(int i = 0; i < velikost_X + 2; i++) printf("#");
+    printf("\n");
 }
 int main(){
+
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);//ai schovani kurzoru
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = FALSE; 
+    SetConsoleCursorInfo(out, &cursorInfo);
+
+
     int koeficient_rozmeru_X = 3;
-    int velikost_Y = input_int(1, 2700000, "velikost pole: ");
+    int velikost_Y = input_int(1, 100, "velikost pole: ");
     int velikost_X = velikost_Y * koeficient_rozmeru_X;
     char pole[velikost_Y][velikost_X];
 
@@ -65,12 +76,6 @@ int main(){
     int vel_BY = -1;
     int vel_BX = 1;
 
-    char hastag_string[velikost_X+1];
-    for(int i = 0; i < velikost_X; i++){
-        hastag_string[i] = '#';
-    }
-    hastag_string[velikost_X] = '\0';
-
     //vynulovani pole na  
     for(int i = 0; i< velikost_Y; i++){
         for(int j = 0; j< velikost_X; j++){
@@ -79,7 +84,7 @@ int main(){
     }
 
     while(1){
-        print_pole(hastag_string, velikost_Y, velikost_X, pole, poz_BY);
+        print_pole(velikost_Y, velikost_X, pole);
         if(poz_BY == 0 || poz_BY == velikost_Y - 1){
             vel_BY = vel_BY * (-1);
         }
@@ -87,6 +92,7 @@ int main(){
             vel_BX = vel_BX * (-1);
         }
         change_pos_B(velikost_Y, velikost_X, pole, vel_BY, vel_BX, &poz_BY, &poz_BX);
+        Sleep(16);
         del_screen();
     }//main while ig
 
