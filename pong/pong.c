@@ -122,6 +122,11 @@ int main(){
         long long stop_usec = (long long)stop.tv_sec * 1000000 + stop.tv_usec;
         long long elapsed_usec = stop_usec - start_usec;
 
+        if( elapsed_usec > (ball_print_speed_miliseconds *1000) /4 ){ //vic printu DDD nez ball
+            print_pole(poz_A1, velikost_Y, velikost_X, pole);
+            del_screen();
+        }
+        
         if( elapsed_usec > ball_print_speed_miliseconds *1000){
             print_pole(poz_A1, velikost_Y, velikost_X, pole);
 
