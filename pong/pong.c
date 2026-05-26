@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
+#include <conio.h>
 
 #define RED     "\033[31m"
 #define RESET   "\033[0m"
@@ -78,7 +79,7 @@ int main(){
 
 
     int koeficient_rozmeru_X = 3;
-    int velikost_Y = input_int(1, 100, "velikost pole: ");
+    int velikost_Y = 20; //velikost cely veci
     int velikost_X = velikost_Y * koeficient_rozmeru_X;
     char pole[velikost_Y][velikost_X];
 
@@ -90,6 +91,7 @@ int main(){
     int vel_BY = -1;
     int vel_BX = 1;
 
+    int input_sipky = 0;
     //vynulovani pole na  
     for(int i = 0; i< velikost_Y; i++){
         for(int j = 0; j< velikost_X; j++){
@@ -98,11 +100,29 @@ int main(){
     }
 
     while(1){
+        if(_kbhit()){
+            input_sipky = getch();
+            if(input_sipky == 119 && poz_A1 != 0){
+                poz_A1 = poz_A1 -1;
+            }
+            if(input_sipky == 115 && poz_A1 != velikost_Y-3){
+                poz_A1 = poz_A1 +1;
+            }
+        }
         print_pole(poz_A1, velikost_Y, velikost_X, pole);
-        if(poz_BY == 0 || poz_BY == velikost_Y - 1){
+        if(poz_BY == 0 || poz_BY == velikost_Y - 1){ //odrazeni o strany
             vel_BY = vel_BY * (-1);
         }
-        if(poz_BX == 0 || poz_BX == velikost_X - 1){
+
+        if(      (poz_BX == 0 && (poz_BY != poz_A1))  ||  (poz_BX == 0 && (poz_BY != poz_A1 +1)) ||  (poz_BX == 0 && (poz_BY != poz_A1 +2))    ){//losing?
+            system("cls");
+            printf("A1: %d\n", poz_A1);
+            printf("BY: %d\n", poz_BY);
+            printf(" YOU LOST ");
+            Sleep(10000);
+            exit(0);
+        }
+        else if(poz_BX == 0 || poz_BX == velikost_X - 1){
             vel_BX = vel_BX * (-1);
         }
         change_pos_B(velikost_Y, velikost_X, pole, vel_BY, vel_BX, &poz_BY, &poz_BX);
