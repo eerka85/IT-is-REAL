@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
-#include <conio.h>
+#include <conio.h> //kbhit
+#include <sys/time.h> //master milisekunf
 
 #define RED     "\033[31m"
 #define RESET   "\033[0m"
@@ -56,8 +57,9 @@ void print_pole(int poz_A1, int velikost_Y, int velikost_X, char pole[velikost_Y
             A1_pomoc--;
         }
         else{
-        printf("# "); // Left wall
+            printf("# "); // Left wall
         }
+
         for(int j = 0; j < velikost_X; j++){
             if(pole[i][j] == 'O') printf(RED BOLD "O" RESET);
             else printf(" ");
@@ -77,6 +79,8 @@ int main(){
     cursorInfo.bVisible = FALSE; 
     SetConsoleCursorInfo(out, &cursorInfo);
 
+    struct timeval start, stop;
+    int ball_print_speed_miliseconds = 40;
 
     int koeficient_rozmeru_X = 3;
     int velikost_Y = 20; //velikost cely veci
@@ -99,6 +103,9 @@ int main(){
         }
     }
 
+
+    gettimeofday(&start, NULL); //prvni pocatek
+
     while(1){
         if(_kbhit()){
             input_sipky = getch();
@@ -109,25 +116,34 @@ int main(){
                 poz_A1 = poz_A1 +1;
             }
         }
-        print_pole(poz_A1, velikost_Y, velikost_X, pole);
-        if(poz_BY == 0 || poz_BY == velikost_Y - 1){ //odrazeni o strany
-            vel_BY = vel_BY * (-1);
+
+        gettimeofday(&stop, NULL); //abych nemusel pouzit Sleep
+        long long start_usec = (long long)start.tv_sec * 1000000 + start.tv_usec;
+        long long stop_usec = (long long)stop.tv_sec * 1000000 + stop.tv_usec;
+        long long elapsed_usec = stop_usec - start_usec;
+
+        if( elapsed_usec > ball_print_speed_miliseconds *1000){
+            print_pole(poz_A1, velikost_Y, velikost_X, pole);
+
+            if(poz_BX == 0 || poz_BX == velikost_X - 1){ //odrazeni o strany
+                vel_BX = vel_BX * (-1); //prevraceni hodnoty
+            }
+            if(poz_BY == 0 || poz_BY == velikost_Y - 1){ //odrazeni o strany
+                vel_BY = vel_BY * (-1);
+            }
+            change_pos_B(velikost_Y, velikost_X, pole, vel_BY, vel_BX, &poz_BY, &poz_BX);
+
+            if( poz_BX == 0 && !( (poz_BY == poz_A1) ||  (poz_BY == poz_A1 +1) || (poz_BY == poz_A1 +2)  ) ){//losing?
+                system("cls");
+                printf(" YOU LOST ");
+                Sleep(10000);
+                exit(0);
+            }
+            del_screen();
+            gettimeofday(&start, NULL); //novej pocatek
         }
 
-        if(      (poz_BX == 0 && (poz_BY != poz_A1))  ||  (poz_BX == 0 && (poz_BY != poz_A1 +1)) ||  (poz_BX == 0 && (poz_BY != poz_A1 +2))    ){//losing?
-            system("cls");
-            printf("A1: %d\n", poz_A1);
-            printf("BY: %d\n", poz_BY);
-            printf(" YOU LOST ");
-            Sleep(10000);
-            exit(0);
-        }
-        else if(poz_BX == 0 || poz_BX == velikost_X - 1){
-            vel_BX = vel_BX * (-1);
-        }
-        change_pos_B(velikost_Y, velikost_X, pole, vel_BY, vel_BX, &poz_BY, &poz_BX);
-        Sleep(16);
-        del_screen();
+
     }//main while ig
 
     return 0;
