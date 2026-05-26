@@ -37,23 +37,35 @@ int change_pos_B(int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_
     *poz_BY = *poz_BY + vel_BY;
     *poz_BX = *poz_BX + vel_BX;
 }
-void print_pole(int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]){
+void print_pole(int poz_A1, int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]){
+    int A1_pomoc = 0;
     // 1. Print Top Border
-    for(int i = 0; i < velikost_X + 2; i++) printf("#");
+    for(int i = 0; i < velikost_X + 4; i++) printf("#");
     printf("\n");
 
     // 2. Print Grid
     for(int i = 0; i < velikost_Y; i++){
-        printf("#"); // Left wall
+        if(i == poz_A1){
+            A1_pomoc = 3;//velikost mredky
+        }
+
+        if(A1_pomoc >0){
+            printf("#"); // Left wall
+            printf(BOLD RED "D" RESET); //odrazeci vec
+            A1_pomoc--;
+        }
+        else{
+        printf("# "); // Left wall
+        }
         for(int j = 0; j < velikost_X; j++){
             if(pole[i][j] == 'O') printf(RED BOLD "O" RESET);
             else printf(" ");
         }
-        printf("#\n"); // Right wall
+        printf(" #\n"); // Right wall
     }
 
     // 3. Print Bottom Border
-    for(int i = 0; i < velikost_X + 2; i++) printf("#");
+    for(int i = 0; i < velikost_X + 4; i++) printf("#");
     printf("\n");
 }
 int main(){
@@ -73,6 +85,8 @@ int main(){
     int poz_BY = velikost_Y / 2;
     int poz_BX = velikost_X / 2;
 
+    int poz_A1 = velikost_Y/2;
+
     int vel_BY = -1;
     int vel_BX = 1;
 
@@ -84,7 +98,7 @@ int main(){
     }
 
     while(1){
-        print_pole(velikost_Y, velikost_X, pole);
+        print_pole(poz_A1, velikost_Y, velikost_X, pole);
         if(poz_BY == 0 || poz_BY == velikost_Y - 1){
             vel_BY = vel_BY * (-1);
         }
