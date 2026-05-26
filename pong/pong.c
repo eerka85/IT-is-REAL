@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <windows.h>
 #include <conio.h> //kbhit
 #include <sys/time.h> //master milisekunf
+#include <stdbool.h>
 
 #define RED     "\033[31m"
 #define RESET   "\033[0m"
@@ -71,6 +73,21 @@ void print_pole(int poz_A1, int velikost_Y, int velikost_X, char pole[velikost_Y
     for(int i = 0; i < velikost_X + 4; i++) printf("#");
     printf("\n");
 }
+int print_soub(char volba_art[]){
+    char direction_soub[] = {"C:/Users/johnn/Desktop/programy C/random ahh programy + skola/IT-is-REAL/pong/"};
+    strcpy(direction_soub, volba_art);
+    char buffer[256];
+
+    FILE * soubor = fopen(direction_soub, "r");
+    if(soubor == NULL){
+        return 1;
+    }
+    while(fgets(buffer, sizeof(buffer), soubor)){
+        printf("%s", buffer);
+    }
+
+    fclose(soubor);
+}
 int main(){
 
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);//ai schovani kurzoru
@@ -81,6 +98,7 @@ int main(){
 
     struct timeval start, stop;
     int ball_print_speed_miliseconds = 40;
+    bool speeding_up = false;
 
     int koeficient_rozmeru_X = 3;
     int velikost_Y = 20; //velikost cely veci
@@ -95,7 +113,7 @@ int main(){
     int vel_BY = -1;
     int vel_BX = 1;
 
-    int input_sipky = 0;
+    int input_klaves = 0;
     //vynulovani pole na  
     for(int i = 0; i< velikost_Y; i++){
         for(int j = 0; j< velikost_X; j++){
@@ -108,12 +126,18 @@ int main(){
 
     while(1){
         if(_kbhit()){
-            input_sipky = getch();
-            if(input_sipky == 119 && poz_A1 != 0){
+            input_klaves = getch();
+            if(input_klaves == 119 && poz_A1 != 0){
                 poz_A1 = poz_A1 -1;
             }
-            if(input_sipky == 115 && poz_A1 != velikost_Y-3){
+            if(input_klaves == 115 && poz_A1 != velikost_Y-3){
                 poz_A1 = poz_A1 +1;
+            }
+            if(input_klaves == 32){
+                speeding_up = true;
+            }
+            else{
+                speeding_up = false;
             }
         }
 
@@ -122,11 +146,11 @@ int main(){
         long long stop_usec = (long long)stop.tv_sec * 1000000 + stop.tv_usec;
         long long elapsed_usec = stop_usec - start_usec;
 
-        if( elapsed_usec > (ball_print_speed_miliseconds *1000) /4 ){ //vic printu DDD nez ball
+        if(!speeding_up && elapsed_usec > (ball_print_speed_miliseconds *1000) /4 ){ //vic printu DDD nez ball
             print_pole(poz_A1, velikost_Y, velikost_X, pole);
             del_screen();
         }
-        
+
         if( elapsed_usec > ball_print_speed_miliseconds *1000){
             print_pole(poz_A1, velikost_Y, velikost_X, pole);
 
@@ -140,8 +164,9 @@ int main(){
 
             if( poz_BX == 0 && !( (poz_BY == poz_A1) ||  (poz_BY == poz_A1 +1) || (poz_BY == poz_A1 +2)  ) ){//losing?
                 system("cls");
-                printf(" YOU LOST ");
-                Sleep(10000);
+                print_soub("lost.txt");
+                clean_buffer();
+                getchar();
                 exit(0);
             }
             del_screen();
