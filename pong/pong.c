@@ -41,7 +41,7 @@ int change_pos_B(int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_
     *poz_BY = *poz_BY + vel_BY;
     *poz_BX = *poz_BX + vel_BX;
 }
-void print_pole(int poz_A1, int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]){
+void print_pole(int ball_print_DELAY_MICROseconds, int poz_A1, int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]){
     int A1_pomoc = 0;
     // 1. Print Top Border
     for(int i = 0; i < velikost_X + 4; i++) printf("#");
@@ -72,6 +72,7 @@ void print_pole(int poz_A1, int velikost_Y, int velikost_X, char pole[velikost_Y
     // 3. Print Bottom Border
     for(int i = 0; i < velikost_X + 4; i++) printf("#");
     printf("\n");
+    printf("ball_print_DELAY_MICROseconds: %d", ball_print_DELAY_MICROseconds);
 }
 int print_soub(char volba_art[]){
     char direction_soub[] = {"C:/Users/johnn/Desktop/programy C/random ahh programy + skola/IT-is-REAL/pong/"};
@@ -85,6 +86,7 @@ int print_soub(char volba_art[]){
     while(fgets(buffer, sizeof(buffer), soubor)){
         printf("%s", buffer);
     }
+    printf("\n");
 
     fclose(soubor);
 }
@@ -97,7 +99,7 @@ int main(){
     SetConsoleCursorInfo(out, &cursorInfo);
 
     struct timeval start, stop;
-    int ball_print_speed_miliseconds = 40;
+    int ball_print_DELAY_MICROseconds = 40000;
     bool speeding_up = false;
 
     int koeficient_rozmeru_X = 3;
@@ -151,13 +153,13 @@ int main(){
         long long stop_usec = (long long)stop.tv_sec * 1000000 + stop.tv_usec;
         long long elapsed_usec = stop_usec - start_usec;
 
-        if(!speeding_up && elapsed_usec > (ball_print_speed_miliseconds *1000) /4 ){ //vic printu DDD nez ball
-            print_pole(poz_A1, velikost_Y, velikost_X, pole);
+        if(!speeding_up && elapsed_usec > (ball_print_DELAY_MICROseconds) /4 ){ //vic printu DDD nez ball
+            print_pole(ball_print_DELAY_MICROseconds, poz_A1, velikost_Y, velikost_X, pole);
             del_screen();
         }
 
-        if( elapsed_usec > ball_print_speed_miliseconds *1000){
-            print_pole(poz_A1, velikost_Y, velikost_X, pole);
+        if( elapsed_usec > ball_print_DELAY_MICROseconds){
+            print_pole(ball_print_DELAY_MICROseconds, poz_A1, velikost_Y, velikost_X, pole);
 
             if(poz_BX == 0 || poz_BX == velikost_X - 1){ //odrazeni o strany
                 vel_BX = vel_BX * (-1); //prevraceni hodnoty
@@ -169,13 +171,20 @@ int main(){
 
             if( poz_BX == 0 && !( (poz_BY == poz_A1) ||  (poz_BY == poz_A1 +1) || (poz_BY == poz_A1 +2)  ) ){//losing?
                 system("cls");
+
                 print_soub("lost.txt");
+                print_pole(ball_print_DELAY_MICROseconds, poz_A1, velikost_Y, velikost_X, pole);
+                printf("\n");
+                
                 clean_buffer();
                 getchar();
                 break;
             }
             del_screen();
             gettimeofday(&start, NULL); //novej pocatek
+            if(ball_print_DELAY_MICROseconds > 1000){ //minimum hranice ball_print_DELAY_MICROseconds
+                ball_print_DELAY_MICROseconds -= 50;
+            }
         }
 
 
