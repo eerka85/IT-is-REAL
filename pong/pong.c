@@ -124,6 +124,11 @@ int main(){
 
     gettimeofday(&start, NULL); //prvni pocatek
 
+    print_soub("pong.txt");
+    printf("\nCONTROLS: 1. W & S  == move bar up and down\n          2. SPACE == speed up (a little)\npress ENTER to play...");
+    clean_buffer();
+    getchar();
+    system("cls");
     while(1){
         if(_kbhit()){
             input_klaves = getch();
@@ -167,7 +172,7 @@ int main(){
                 print_soub("lost.txt");
                 clean_buffer();
                 getchar();
-                exit(0);
+                break;
             }
             del_screen();
             gettimeofday(&start, NULL); //novej pocatek
