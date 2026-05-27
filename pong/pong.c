@@ -41,8 +41,9 @@ int change_pos_B(int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_
     *poz_BY = *poz_BY + vel_BY;
     *poz_BX = *poz_BX + vel_BX;
 }
-void print_pole(int ball_print_DELAY_MICROseconds, int poz_A1, int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]){
+void print_pole(bool speeding_up, int ball_print_DELAY_MICROseconds, int poz_A1, int poz_A2, int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]){
     int A1_pomoc = 0;
+    int A2_pomoc = 0;
     // 1. Print Top Border
     for(int i = 0; i < velikost_X + 4; i++) printf("#");
     printf("\n");
@@ -50,7 +51,10 @@ void print_pole(int ball_print_DELAY_MICROseconds, int poz_A1, int velikost_Y, i
     // 2. Print Grid
     for(int i = 0; i < velikost_Y; i++){
         if(i == poz_A1){
-            A1_pomoc = 3;//velikost mredky
+            A1_pomoc = 3;//velikost mredky 1
+        }
+         if(i == poz_A2){
+            A2_pomoc = 3;//velikost mredky 2
         }
 
         if(A1_pomoc >0){
@@ -66,13 +70,21 @@ void print_pole(int ball_print_DELAY_MICROseconds, int poz_A1, int velikost_Y, i
             if(pole[i][j] == 'O') printf(RED BOLD "O" RESET);
             else printf(" ");
         }
-        printf(" #\n"); // Right wall
+        if(A2_pomoc >0){
+            printf(BOLD RED "C" RESET); //odrazeci vec
+            printf("#\n"); 
+            A2_pomoc--;
+        }
+        else{
+            printf(" #\n"); // Right wall
+        }
     }
 
     // 3. Print Bottom Border
     for(int i = 0; i < velikost_X + 4; i++) printf("#");
     printf("\n");
-    printf("ball_print_DELAY_MICROseconds: %d", ball_print_DELAY_MICROseconds);
+    printf("ball_print_DELAY_MICROseconds: %d\n", ball_print_DELAY_MICROseconds);
+    printf("Status: %s", speeding_up ? "true" : "false"); 
 }
 int print_soub(char volba_art[]){
     char direction_soub[] = {"C:/Users/johnn/Desktop/programy C/random ahh programy + skola/IT-is-REAL/pong/"};
@@ -111,6 +123,7 @@ int main(){
     int poz_BX = velikost_X / 2;
 
     int poz_A1 = velikost_Y/2;
+    int poz_A2 = velikost_Y/2;
 
     int vel_BY = -1;
     int vel_BX = 1;
@@ -134,17 +147,22 @@ int main(){
     while(1){
         if(_kbhit()){
             input_klaves = getch();
-            if(input_klaves == 119 && poz_A1 != 0){
+            if(input_klaves == 119 && poz_A1 != 0){ //A1
                 poz_A1 = poz_A1 -1;
             }
             if(input_klaves == 115 && poz_A1 != velikost_Y-3){
                 poz_A1 = poz_A1 +1;
             }
+
+            if(input_klaves == 111 && poz_A2 != 0){ //A2
+                poz_A2 = poz_A2 -1;
+            }
+            if(input_klaves == 107 && poz_A2 != velikost_Y-3){
+                poz_A2 = poz_A2 +1;
+            }
+
             if(input_klaves == 32){
                 speeding_up = true;
-            }
-            else{
-                speeding_up = false;
             }
         }
 
@@ -154,12 +172,12 @@ int main(){
         long long elapsed_usec = stop_usec - start_usec;
 
         if(!speeding_up && elapsed_usec > (ball_print_DELAY_MICROseconds) /4 ){ //vic printu DDD nez ball
-            print_pole(ball_print_DELAY_MICROseconds, poz_A1, velikost_Y, velikost_X, pole);
+            print_pole(speeding_up, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
             del_screen();
         }
 
         if( elapsed_usec > ball_print_DELAY_MICROseconds){
-            print_pole(ball_print_DELAY_MICROseconds, poz_A1, velikost_Y, velikost_X, pole);
+            print_pole(speeding_up, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
 
             if(poz_BX == 0 || poz_BX == velikost_X - 1){ //odrazeni o strany
                 vel_BX = vel_BX * (-1); //prevraceni hodnoty
@@ -169,11 +187,22 @@ int main(){
             }
             change_pos_B(velikost_Y, velikost_X, pole, vel_BY, vel_BX, &poz_BY, &poz_BX);
 
-            if( poz_BX == 0 && !( (poz_BY == poz_A1) ||  (poz_BY == poz_A1 +1) || (poz_BY == poz_A1 +2)  ) ){//losing?
+            if( poz_BX == 0 && !( (poz_BY == poz_A1) ||  (poz_BY == poz_A1 +1) || (poz_BY == poz_A1 +2)  ) ){//losing? A1
                 system("cls");
-
-                print_soub("lost.txt");
-                print_pole(ball_print_DELAY_MICROseconds, poz_A1, velikost_Y, velikost_X, pole);
+                print_pole(speeding_up, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
+                printf("\n");
+                print_soub("lost1.txt");
+                printf("\n");
+                
+                clean_buffer();
+                getchar();
+                break;
+            }
+            if( poz_BX == velikost_X-1 && !( (poz_BY == poz_A2) ||  (poz_BY == poz_A2 +1) || (poz_BY == poz_A2 +2)  ) ){//losing? A2
+                system("cls");
+                print_pole(speeding_up, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
+                printf("\n");
+                print_soub("lost2.txt");
                 printf("\n");
                 
                 clean_buffer();
@@ -185,8 +214,8 @@ int main(){
             if(ball_print_DELAY_MICROseconds > 1000){ //minimum hranice ball_print_DELAY_MICROseconds
                 ball_print_DELAY_MICROseconds -= 50;
             }
+            speeding_up = false;
         }
-
 
     }//main while ig
 
