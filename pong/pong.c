@@ -84,7 +84,7 @@ void print_pole(bool speeding_up, int ball_print_DELAY_MICROseconds, int poz_A1,
     for(int i = 0; i < velikost_X + 4; i++) printf("#");
     printf("\n");
     printf("ball_print_DELAY_MICROseconds: %d\n", ball_print_DELAY_MICROseconds);
-    printf("Status: %s", speeding_up ? "true" : "false"); 
+    printf("Status: %s", speeding_up ? "true " : "false"); 
 }
 int print_soub(char volba_art[]){
     char direction_soub[] = {"C:/Users/johnn/Desktop/programy C/random ahh programy + skola/IT-is-REAL/pong/"};
@@ -140,7 +140,7 @@ int main(){
     gettimeofday(&start, NULL); //prvni pocatek
 
     print_soub("pong.txt");
-    printf("\nCONTROLS: 1. W & S  == move bar up and down\n          2. SPACE == speed up (a little)\npress ENTER to play...");
+    printf("\nCONTROLS: 1. player 1: W & S == move left bar up and down\n             player 2: O & K == move right bar up and down\n          2. SPACE == speed up (a little)\npress ENTER to play...");
     clean_buffer();
     getchar();
     system("cls");
