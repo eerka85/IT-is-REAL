@@ -11,98 +11,13 @@
 #define RESET   "\033[0m"
 #define BOLD    "\033[1m"
 
-void clean_buffer(){
-    int c;
-    while((c = getchar()) != '\n' && c != EOF){}
-}
-void del_screen(){
-	COORD cursorPosition;// ts is highkey ai
-    cursorPosition.X = 0;
-    cursorPosition.Y = 0;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPosition);
-}
-int input_int(int min, int max, char vypis[]) {
-	int tmp = 0;
-	while(1) {
-		printf("%s", vypis);
-		int is_input_valid = scanf("%d", &tmp);
-		clean_buffer();
-		if(is_input_valid == 0 || tmp <min || tmp >max) {
-			printf(  "##failed to load number##\n" );
-			continue;
-		}
-		else {
-			return tmp;
-		}
-	}
-}
-void change_pos_B(int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X], int vel_BY, int vel_BX, int *poz_BY, int *poz_BX){
-    pole[*poz_BY + vel_BY][*poz_BX + vel_BX] = 'O';
-    pole[*poz_BY][*poz_BX] = ' ';
-    *poz_BY = *poz_BY + vel_BY;
-    *poz_BX = *poz_BX + vel_BX;
-}
-void print_pole(bool speeding_up, int ball_print_DELAY_MICROseconds, int poz_A1, int poz_A2, int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]){
-    int A1_pomoc = 0;
-    int A2_pomoc = 0;
-    // 1. Print Top Border
-    for(int i = 0; i < velikost_X + 4; i++) printf("#");
-    printf("\n");
+void clean_buffer();
+void del_screen();
+int input_int(int min, int max, char vypis[]);
+int print_soub(char volba_art[]);
+void change_pos_B(int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X], int vel_BY, int vel_BX, int *poz_BY, int *poz_BX);
+void print_pole(bool speeding_up, int ball_print_DELAY_MICROseconds, int poz_A1, int poz_A2, int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]);
 
-    // 2. Print Grid
-    for(int i = 0; i < velikost_Y; i++){
-        if(i == poz_A1){
-            A1_pomoc = 3;//velikost mredky 1
-        }
-         if(i == poz_A2){
-            A2_pomoc = 3;//velikost mredky 2
-        }
-
-        if(A1_pomoc >0){
-            printf("#"); // Left wall
-            printf(BOLD RED "D" RESET); //odrazeci vec
-            A1_pomoc--;
-        }
-        else{
-            printf("# "); // Left wall
-        }
-
-        for(int j = 0; j < velikost_X; j++){
-            if(pole[i][j] == 'O') printf(RED BOLD "O" RESET);
-            else printf(" ");
-        }
-        if(A2_pomoc >0){
-            printf(BOLD RED "C" RESET); //odrazeci vec
-            printf("#\n"); 
-            A2_pomoc--;
-        }
-        else{
-            printf(" #\n"); // Right wall
-        }
-    }
-
-    // 3. Print Bottom Border
-    for(int i = 0; i < velikost_X + 4; i++) printf("#");
-    printf("\n");
-    printf("ball_print_DELAY_MICROseconds: %d\n", ball_print_DELAY_MICROseconds);
-    printf("Status: %s", speeding_up ? "true " : "false"); 
-}
-int print_soub(char volba_art[]){
-    char direction_soub[] = {"C:/Users/johnn/Desktop/programy C/random ahh programy + skola/IT-is-REAL/pong/"};
-    strcat(direction_soub, volba_art);
-    char buffer[256];
-
-    FILE * soubor = fopen(direction_soub, "r");
-    if(soubor == NULL){
-        return 1;
-    }
-    while(fgets(buffer, sizeof(buffer), soubor)){
-        printf("%s", buffer);
-    }
-    printf("\n");
-
-    fclose(soubor);
-}
 int main(){
 
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);//ai schovani kurzoru
@@ -225,3 +140,96 @@ int main(){
 
     return 0;
 }
+void clean_buffer(){
+    int c;
+    while((c = getchar()) != '\n' && c != EOF){}
+}
+void del_screen(){
+	COORD cursorPosition;// ts is highkey ai
+    cursorPosition.X = 0;
+    cursorPosition.Y = 0;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPosition);
+}
+int input_int(int min, int max, char vypis[]){
+	int tmp = 0;
+	while(1) {
+		printf("%s", vypis);
+		int is_input_valid = scanf("%d", &tmp);
+		clean_buffer();
+		if(is_input_valid == 0 || tmp <min || tmp >max) {
+			printf(  "##failed to load number##\n" );
+			continue;
+		}
+		else {
+			return tmp;
+		}
+	}
+}
+int print_soub(char volba_art[]){
+    char direction_soub[] = {"C:/Users/johnn/Desktop/programy C/random ahh programy + skola/IT-is-REAL/pong/"};
+    strcat(direction_soub, volba_art);
+    char buffer[256];
+
+    FILE * soubor = fopen(direction_soub, "r");
+    if(soubor == NULL){
+        return 1;
+    }
+    while(fgets(buffer, sizeof(buffer), soubor)){
+        printf("%s", buffer);
+    }
+    printf("\n");
+
+    fclose(soubor);
+}
+void change_pos_B(int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X], int vel_BY, int vel_BX, int *poz_BY, int *poz_BX){
+    pole[*poz_BY + vel_BY][*poz_BX + vel_BX] = 'O';
+    pole[*poz_BY][*poz_BX] = ' ';
+    *poz_BY = *poz_BY + vel_BY;
+    *poz_BX = *poz_BX + vel_BX;
+}
+void print_pole(bool speeding_up, int ball_print_DELAY_MICROseconds, int poz_A1, int poz_A2, int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]){
+    int A1_pomoc = 0;
+    int A2_pomoc = 0;
+    // 1. Print Top Border
+    for(int i = 0; i < velikost_X + 4; i++) printf("#");
+    printf("\n");
+
+    // 2. Print Grid
+    for(int i = 0; i < velikost_Y; i++){
+        if(i == poz_A1){
+            A1_pomoc = 3;//velikost mredky 1
+        }
+         if(i == poz_A2){
+            A2_pomoc = 3;//velikost mredky 2
+        }
+
+        if(A1_pomoc >0){
+            printf("#"); // Left wall
+            printf(BOLD RED "D" RESET); //odrazeci vec
+            A1_pomoc--;
+        }
+        else{
+            printf("# "); // Left wall
+        }
+
+        for(int j = 0; j < velikost_X; j++){
+            if(pole[i][j] == 'O') printf(RED BOLD "O" RESET);
+            else printf(" ");
+        }
+        if(A2_pomoc >0){
+            printf(BOLD RED "C" RESET); //odrazeci vec
+            printf("#\n"); 
+            A2_pomoc--;
+        }
+        else{
+            printf(" #\n"); // Right wall
+        }
+    }
+
+    // 3. Print Bottom Border
+    for(int i = 0; i < velikost_X + 4; i++) printf("#");
+    printf("\n");
+    printf("ball_print_DELAY_MICROseconds: %d\n", ball_print_DELAY_MICROseconds);
+    printf("Status: %s", speeding_up ? "true " : "false"); 
+}
+
