@@ -19,7 +19,6 @@ void change_pos_B(int velikost_Y, int velikost_X, char pole[velikost_Y][velikost
 void print_pole(bool speeding_up, int ball_print_DELAY_MICROseconds, int poz_A1, int poz_A2, int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]);
 
 int main(){
-
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);//ai schovani kurzoru
     CONSOLE_CURSOR_INFO cursorInfo;
     GetConsoleCursorInfo(out, &cursorInfo);
@@ -53,92 +52,118 @@ int main(){
         }
     }
 
-
-    gettimeofday(&start, NULL); //prvni pocatek
-
-    print_soub("pong.txt");
-    printf("\nCONTROLS: 1. player 1: W & S == move left bar up and down\n             player 2: O & K == move right bar up and down\n          2. SPACE == speed up (a little)\npress ENTER to play...");
-    getchar();
-    system("cls");
     while(1){
-        if(_kbhit()){
-            input_klaves = getch();
-            if(input_klaves == 119 && poz_A1 != 0){ //A1
-                poz_A1 = poz_A1 -1;
-            }
-            if(input_klaves == 115 && poz_A1 != velikost_Y-3){
-                poz_A1 = poz_A1 +1;
+        gettimeofday(&start, NULL); //prvni pocatek
+
+        print_soub("pong.txt");
+        printf("\nCONTROLS: 1. player 1: W & S == move left bar up and down\n             player 2: O & K == move right bar up and down\n          2. SPACE == speed up (a little)\npress ENTER to play...");
+        getchar();
+        system("cls");
+        while(2){
+            if(_kbhit()){
+                input_klaves = getch();
+                if(input_klaves == 119 && poz_A1 != 0){ //A1
+                    poz_A1 = poz_A1 -1;
+                }
+                if(input_klaves == 115 && poz_A1 != velikost_Y-3){
+                    poz_A1 = poz_A1 +1;
+                }
+
+                if(input_klaves == 111 && poz_A2 != 0){ //A2
+                    poz_A2 = poz_A2 -1;
+                }
+                if(input_klaves == 107 && poz_A2 != velikost_Y-3){
+                    poz_A2 = poz_A2 +1;
+                }
+
+                if(input_klaves == 32){
+                    speeding_up = true;
+                }
+                else{
+                    speeding_up = false;
+                }
             }
 
-            if(input_klaves == 111 && poz_A2 != 0){ //A2
-                poz_A2 = poz_A2 -1;
-            }
-            if(input_klaves == 107 && poz_A2 != velikost_Y-3){
-                poz_A2 = poz_A2 +1;
+            gettimeofday(&stop, NULL); //abych nemusel pouzit Sleep
+            long long start_usec = (long long)start.tv_sec * 1000000 + start.tv_usec;
+            long long stop_usec = (long long)stop.tv_sec * 1000000 + stop.tv_usec;
+            long long elapsed_usec = stop_usec - start_usec;
+
+
+            if( elapsed_usec > ball_print_DELAY_MICROseconds/4){ // DDD a CCC
+                if(cycles_count == 4){ //ball
+
+                    if(poz_BX == 0 || poz_BX == velikost_X - 1){ //odrazeni o strany
+                        vel_BX = vel_BX * (-1); //prevraceni hodnoty
+                    }
+                    if(poz_BY == 0 || poz_BY == velikost_Y - 1){ //odrazeni o strany
+                        vel_BY = vel_BY * (-1);
+                    }
+                    change_pos_B(velikost_Y, velikost_X, pole, vel_BY, vel_BX, &poz_BY, &poz_BX);
+
+
+                    if( poz_BX == 0 && !( (poz_BY == poz_A1) ||  (poz_BY == poz_A1 +1) || (poz_BY == poz_A1 +2)  ) ){//losing? A1
+                        system("cls");
+                        print_pole(speeding_up, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
+                        printf("\n");
+                        print_soub("lost1.txt");
+                        printf("\n");
+                        
+                        getchar();
+                        break;
+                    }
+                    if( poz_BX == velikost_X-1 && !( (poz_BY == poz_A2) ||  (poz_BY == poz_A2 +1) || (poz_BY == poz_A2 +2)  ) ){//losing? A2
+                        system("cls");
+                        print_pole(speeding_up, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
+                        printf("\n");
+                        print_soub("lost2.txt");
+                        printf("\n");
+                        
+                        getchar();
+                        break;
+                    }
+
+                    
+                    
+                    if(ball_print_DELAY_MICROseconds > 1000){ //minimum hranice ball_print_DELAY_MICROseconds
+                        ball_print_DELAY_MICROseconds -= 50;
+                    }
+                    //speeding_up = false;
+                    cycles_count = 0;
+                }
+
+                print_pole(speeding_up, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
+                cycles_count++;
+                del_screen();
+                gettimeofday(&start, NULL); //novej pocatek
             }
 
-            if(input_klaves == 32){
-                speeding_up = true;
+        }//main while ig
+        system("cls");
+        print_soub("again.txt");
+        getchar();
+        //RESET
+        poz_BY = velikost_Y / 2;
+        poz_BX = velikost_X / 2;
+
+        poz_A1 = velikost_Y/2;
+        poz_A2 = velikost_Y/2;
+
+        vel_BY = 1;//opacne
+        vel_BX = -1;
+
+        ball_print_DELAY_MICROseconds = 40000;
+
+        input_klaves = 0;
+        //vynulovani pole na  
+        for(int i = 0; i< velikost_Y; i++){
+            for(int j = 0; j< velikost_X; j++){
+                pole[i][j] = '#';
             }
         }
 
-        gettimeofday(&stop, NULL); //abych nemusel pouzit Sleep
-        long long start_usec = (long long)start.tv_sec * 1000000 + start.tv_usec;
-        long long stop_usec = (long long)stop.tv_sec * 1000000 + stop.tv_usec;
-        long long elapsed_usec = stop_usec - start_usec;
-
-
-        if( elapsed_usec > ball_print_DELAY_MICROseconds/4){ // DDD a CCC
-            if(cycles_count == 4){ //ball
-
-                if(poz_BX == 0 || poz_BX == velikost_X - 1){ //odrazeni o strany
-                    vel_BX = vel_BX * (-1); //prevraceni hodnoty
-                }
-                if(poz_BY == 0 || poz_BY == velikost_Y - 1){ //odrazeni o strany
-                    vel_BY = vel_BY * (-1);
-                }
-                change_pos_B(velikost_Y, velikost_X, pole, vel_BY, vel_BX, &poz_BY, &poz_BX);
-
-
-                if( poz_BX == 0 && !( (poz_BY == poz_A1) ||  (poz_BY == poz_A1 +1) || (poz_BY == poz_A1 +2)  ) ){//losing? A1
-                    system("cls");
-                    print_pole(speeding_up, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
-                    printf("\n");
-                    print_soub("lost1.txt");
-                    printf("\n");
-                    
-                    getchar();
-                    break;
-                }
-                if( poz_BX == velikost_X-1 && !( (poz_BY == poz_A2) ||  (poz_BY == poz_A2 +1) || (poz_BY == poz_A2 +2)  ) ){//losing? A2
-                    system("cls");
-                    print_pole(speeding_up, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
-                    printf("\n");
-                    print_soub("lost2.txt");
-                    printf("\n");
-                    
-                    getchar();
-                    break;
-                }
-
-                
-                
-                if(ball_print_DELAY_MICROseconds > 1000){ //minimum hranice ball_print_DELAY_MICROseconds
-                    ball_print_DELAY_MICROseconds -= 50;
-                }
-                speeding_up = false;
-                cycles_count = 0;
-            }
-
-            print_pole(speeding_up, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
-            cycles_count++;
-            del_screen();
-            gettimeofday(&start, NULL); //novej pocatek
-        }
-
-    }//main while ig
-
-    return 0;
+    }
+    
 }
 void clean_buffer(){
     int c;
@@ -230,6 +255,6 @@ void print_pole(bool speeding_up, int ball_print_DELAY_MICROseconds, int poz_A1,
     for(int i = 0; i < velikost_X + 4; i++) printf("#");
     printf("\n");
     printf("ball_print_DELAY_MICROseconds: %d\n", ball_print_DELAY_MICROseconds);
-    printf("Status: %s", speeding_up ? "true " : "false"); 
+    printf("Speedup?: %s", speeding_up ? "true " : "false"); 
 }
 
