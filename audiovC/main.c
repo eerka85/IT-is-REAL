@@ -27,25 +27,28 @@ int main()
 
 { 
 
-    int i = input_int(0,2); 
+    int volba = input_int(0,2); 
 
-    switch (i)
-    {
+    switch (volba){
     case 0:
-        PlaySound("C:/Users/Honza Stehlik/Desktop/IT-is-REAL/audiovC/Alert.wav", NULL, SND_FILENAME | SND_SYNC);
+        PlaySound("C:/Users/Honza Stehlik/Desktop/IT-is-REAL/audiovC/Alert.wav", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
     break;
 
     case 1:
-        PlaySound("C:/Users/Honza Stehlik/Desktop/IT-is-REAL/audiovC/aehm.wav", NULL, SND_FILENAME | SND_SYNC);
+        PlaySound("C:/Users/Honza Stehlik/Desktop/IT-is-REAL/audiovC/aehm.wav", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
     break;
 
     case 2:
-        PlaySound("C:/Users/Honza Stehlik/Desktop/IT-is-REAL/audiovC/Lasershot.wav", NULL, SND_FILENAME | SND_SYNC);
+        PlaySound("C:/Users/Honza Stehlik/Desktop/IT-is-REAL/audiovC/Lasershot.wav", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
     break;
     
     default:
     break;
     }
+    printf("\nPlaying... Press ENTER to stop and exit.");
+    getchar();
+
+    PlaySound(NULL, NULL, 0);
 
  
 
