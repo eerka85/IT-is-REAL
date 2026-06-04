@@ -10,7 +10,7 @@
                 "${file}",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
-                ""
+                "-lwinmm"
             ],
             "options": {
                 "cwd": "C:/msys64/ucrt64/bin"
