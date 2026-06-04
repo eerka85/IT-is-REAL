@@ -6,17 +6,19 @@
 #include <windows.h>
 #include <sys/time.h> //master milisekunf
 #include <stdbool.h>
-
+//Cau verco jestli se sem koukas :)
 #define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define BLUE    "\033[34m"
 #define RESET   "\033[0m"
 #define BOLD    "\033[1m"
 
 void clean_buffer();
 void del_screen();
 int input_int(int min, int max, char vypis[]);
-int print_soub(char volba_art[]);
+int print_soub(char volba_art[], int color);
 void change_pos_B(int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X], int vel_BY, int vel_BX, int *poz_BY, int *poz_BX);
-void print_pole(bool speeding_up, int ball_print_DELAY_MICROseconds, int poz_A1, int poz_A2, int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]);
+void print_pole(bool speeding_up, int A1_points, int A2_points,  int ball_print_DELAY_MICROseconds, int poz_A1, int poz_A2, int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]);
 
 int main(){
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);//ai schovani kurzoru
@@ -41,8 +43,18 @@ int main(){
     int poz_A1 = velikost_Y/2;
     int poz_A2 = velikost_Y/2;
 
-    int vel_BY = -1;
+    int A1_points = 0;
+    int A2_points = 0;
+
+    int vel_BY = 1;
+    if(rand()%2 == 0){
+        vel_BY = -1;
+    }
+
     int vel_BX = 1;
+    if(rand()%2 == 0){
+        vel_BX = -1;
+    }
 
     int input_klaves = 0;
     //vynulovani pole na  
@@ -55,7 +67,7 @@ int main(){
     while(1){
         gettimeofday(&start, NULL); //prvni pocatek
 
-        print_soub("pong.txt");
+        print_soub("pong.txt", 0);
         printf("\nCONTROLS: 1. player 1: W & S == move left bar up and down\n             player 2: O & K == move right bar up and down\n          2. SPACE == speed up (a little)\npress ENTER to play...");
         getchar();
         system("cls");
@@ -104,20 +116,24 @@ int main(){
 
                     if( poz_BX == 0 && !( (poz_BY == poz_A1) ||  (poz_BY == poz_A1 +1) || (poz_BY == poz_A1 +2)  ) ){//losing? A1
                         system("cls");
-                        print_pole(speeding_up, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
+                        print_pole(speeding_up, A1_points, A2_points, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
                         printf("\n");
-                        print_soub("lost1.txt");
+                        print_soub("lost1.txt", 1);
                         printf("\n");
+
+                        A2_points++;
                         
                         getchar();
                         break;
                     }
                     if( poz_BX == velikost_X-1 && !( (poz_BY == poz_A2) ||  (poz_BY == poz_A2 +1) || (poz_BY == poz_A2 +2)  ) ){//losing? A2
                         system("cls");
-                        print_pole(speeding_up, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
+                        print_pole(speeding_up, A1_points, A2_points, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
                         printf("\n");
-                        print_soub("lost2.txt");
+                        print_soub("lost2.txt", 2);
                         printf("\n");
+
+                        A1_points++;
                         
                         getchar();
                         break;
@@ -132,7 +148,7 @@ int main(){
                     cycles_count = 0;
                 }
 
-                print_pole(speeding_up, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
+                print_pole(speeding_up, A1_points, A2_points, ball_print_DELAY_MICROseconds, poz_A1, poz_A2, velikost_Y, velikost_X, pole);
                 cycles_count++;
                 del_screen();
                 gettimeofday(&start, NULL); //novej pocatek
@@ -140,7 +156,7 @@ int main(){
 
         }//main while ig
         system("cls");
-        print_soub("again.txt");
+        print_soub("again.txt", 0);
         getchar();
         //RESET
         poz_BY = velikost_Y / 2;
@@ -149,8 +165,15 @@ int main(){
         poz_A1 = velikost_Y/2;
         poz_A2 = velikost_Y/2;
 
-        vel_BY = 1;//opacne
-        vel_BX = -1;
+        vel_BY = 1;
+        if(rand()%2 == 0){
+            vel_BY = -1;
+        }
+
+        vel_BX = 1;
+        if(rand()%2 == 0){
+            vel_BX = -1;
+        }
 
         ball_print_DELAY_MICROseconds = 40000;
 
@@ -190,7 +213,7 @@ int input_int(int min, int max, char vypis[]){
 		}
 	}
 }
-int print_soub(char volba_art[]){
+int print_soub(char volba_art[], int color){
     char direction_soub[] = {"C:/Users/johnn/Desktop/programy C/random ahh programy + skola/IT-is-REAL/pong/"};
     strcat(direction_soub, volba_art);
     char buffer[256];
@@ -200,7 +223,17 @@ int print_soub(char volba_art[]){
         return 1;
     }
     while(fgets(buffer, sizeof(buffer), soubor)){
-        printf("%s", buffer);
+        switch(color){
+            case 1:
+                printf(RED "%s" RESET, buffer);
+            break;
+            case 2:
+                printf(BLUE "%s" RESET, buffer);
+            break;
+            default:
+                printf("%s", buffer);
+            break;
+        }
     }
     printf("\n");
 
@@ -212,7 +245,7 @@ void change_pos_B(int velikost_Y, int velikost_X, char pole[velikost_Y][velikost
     *poz_BY = *poz_BY + vel_BY;
     *poz_BX = *poz_BX + vel_BX;
 }
-void print_pole(bool speeding_up, int ball_print_DELAY_MICROseconds, int poz_A1, int poz_A2, int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]){
+void print_pole(bool speeding_up, int A1_points, int A2_points,  int ball_print_DELAY_MICROseconds, int poz_A1, int poz_A2, int velikost_Y, int velikost_X, char pole[velikost_Y][velikost_X]){
     int A1_pomoc = 0;
     int A2_pomoc = 0;
     // 1. Print Top Border
@@ -238,11 +271,11 @@ void print_pole(bool speeding_up, int ball_print_DELAY_MICROseconds, int poz_A1,
         }
 
         for(int j = 0; j < velikost_X; j++){
-            if(pole[i][j] == 'O') printf(RED BOLD "O" RESET);
+            if(pole[i][j] == 'O') printf(GREEN BOLD "O" RESET);
             else printf(" ");
         }
         if(A2_pomoc >0){
-            printf(BOLD RED "C" RESET); //odrazeci vec
+            printf(BOLD BLUE "C" RESET); //odrazeci vec
             printf("#\n"); 
             A2_pomoc--;
         }
@@ -255,6 +288,8 @@ void print_pole(bool speeding_up, int ball_print_DELAY_MICROseconds, int poz_A1,
     for(int i = 0; i < velikost_X + 4; i++) printf("#");
     printf("\n");
     printf("ball_print_DELAY_MICROseconds: %d\n", ball_print_DELAY_MICROseconds);
-    printf("Speedup?: %s", speeding_up ? "true " : "false"); 
+    printf("Speedup?: %s\n", speeding_up ? "true " : "false"); 
+    printf("SCORE: P1 = %d\n       P2 = %d", A1_points, A2_points);
+
 }
 
