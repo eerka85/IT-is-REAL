@@ -2,18 +2,23 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: gcc.exe build active file",
-            "command": "C:/msys64/ucrt64/bin/gcc.exe",
+            "label": "C/C++: g++.exe build active file",
+            "command": "C:\\w64devkit\\bin\\g++.exe",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
+                "-IC:\\raylib\\include",
+                "-LC:\\raylib\\lib",
+                "-lraylib",
+                "-lopengl32",
+                "-lgdi32",
+                "-lwinmm",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe",
-                "-lwinmm"
+                "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
             "options": {
-                "cwd": "C:/msys64/ucrt64/bin"
+                "cwd": "${fileDirname}"
             },
             "problemMatcher": [
                 "$gcc"
