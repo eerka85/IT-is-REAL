@@ -1,6 +1,6 @@
 #include "raylib.h"
 
-int draw_sq_button(char but_txt[], int but_font_size, Rectangle button, float my_button_size_a, Color B_color, Color T_color);
+void draw_sq_button(char but_txt[], int but_font_size, Rectangle button, float my_button_size_a, Color B_color, Color T_color);
 
 
 int main(void) {
@@ -23,15 +23,37 @@ int main(void) {
     int B_but_font_size = 10;
     char B_but_txt[] = {"BUTTON 2"};
 
+    Color A_actual_color;
+    Color B_actual_color;
+
     // Main game loop
     while (!WindowShouldClose()) { // Detect window close button or ESC keyr
         // Update
         // TODO: Update your variables here
+        if(CheckCollisionPointRec(GetMousePosition(), A_button)){ //BUTTON A
+            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                break;
+            }
+            A_actual_color = GRAY;
+        }
+        else{
+            A_actual_color = RED;
+        }
+
+        if(CheckCollisionPointRec(GetMousePosition(), B_button)){ //BUTTON B
+            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                break;
+            }
+            B_actual_color = GRAY;
+        }
+        else{
+            B_actual_color = BLUE;
+        }
 
         // Draw
         BeginDrawing();
-            draw_sq_button(A_but_txt, A_but_font_size, A_button, A_but_size, RED, ORANGE);
-            draw_sq_button(B_but_txt, B_but_font_size, B_button, B_but_size, BLUE, ORANGE);
+            draw_sq_button(A_but_txt, A_but_font_size, A_button, A_but_size, A_actual_color, ORANGE);
+            draw_sq_button(B_but_txt, B_but_font_size, B_button, B_but_size, B_actual_color, ORANGE);
         EndDrawing();
     }
 
@@ -41,9 +63,8 @@ int main(void) {
     return 0;
 }
 
-int draw_sq_button(char but_txt[], int but_font_size, Rectangle button, float my_button_size_a, Color B_color, Color T_color){
+void draw_sq_button(char but_txt[], int but_font_size, Rectangle button, float my_button_size_a, Color B_color, Color T_color){
     ClearBackground(RAYWHITE);
     DrawRectangle(button.x, button.y, button.width, button.height, B_color);
     DrawText(but_txt, (button.x) + (my_button_size_a / 2) - (MeasureText(but_txt, but_font_size) /2), (button.y) + (my_button_size_a / 2) - (but_font_size / 2), but_font_size, T_color);
-    return 0;
 }
