@@ -9,11 +9,12 @@
                 "-g",
                 "${file}",
                 "-IC:\\raylib\\include",
-                "-LC:\\raylib\\lib",
-                "-lraylib",
+                "C:\\raylib\\lib\\libraylib.a", // Point directly to the static file
                 "-lopengl32",
                 "-lgdi32",
                 "-lwinmm",
+                "-static",             // Add this flag to tell GCC to link system libs statically
+                "-static-libgcc",      // Add this to include GCC runtime libraries
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],

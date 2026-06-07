@@ -120,9 +120,15 @@ int main(){
 
 
         if(CheckCollisionCircleRec(ball_pos, ball_radius, Player1)){
+            if(ball_pos.x <= P_width){
+                ball_pos.x = P_width + 1;
+            }
             X_ball_speed *= -1;
         }
         if(CheckCollisionCircleRec(ball_pos, ball_radius, Player2)){
+            if(ball_pos.x >= (screenWidth - P_width)){
+                ball_pos.x = (screenWidth - P_width) - 1;
+            }
             X_ball_speed *= -1;
         }
         ball_pos.y += GetFrameTime() * Y_ball_speed;
@@ -169,6 +175,9 @@ int main(){
         EndDrawing();
     }
 
+    UnloadTexture(pong_logo);
+    UnloadTexture(player1_won);
+    UnloadTexture(player2_won);
     CloseWindow();
 }
 
