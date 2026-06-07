@@ -14,6 +14,8 @@ int main(){
     SetWindowMinSize(screenWidth, screenHeight); //jinak to da zase 800 450
     ClearWindowState(FLAG_WINDOW_RESIZABLE); //flagy jsoi lowk cool
 
+    SetTargetFPS(60);
+
     Texture pong_logo = LoadTexture("pixilart-drawing.png"); //800 x 450
 
     float rec_w = 100.0f;
@@ -26,10 +28,13 @@ int main(){
     };
     Color color_start;
 
-    int ball_radius = 10;
-    float Y_ball_speed = 50.0f;
-    float X_ball_speed = 50.0f;
+    float ball_radius = 10.0f;
+    float Y_ball_speed = 200.0f;
+    float X_ball_speed = 200.0f;
+    float ball_pos_x = (screenWidth /2);
+    float ball_pos_y = (screenHeight /2);
 
+    
     
     while(!WindowShouldClose()){ //start menu
         if(CheckCollisionPointRec(GetMousePosition(), button_start)){
@@ -47,6 +52,23 @@ int main(){
             draw_rec_but_txt(button_start, "PLAY", 20, color_start);
         EndDrawing();
 
+    }
+
+    while(!WindowShouldClose()){ //start menu
+        
+        if(ball_pos_y < ball_radius || ball_pos_y > (screenHeight - ball_radius)){
+            Y_ball_speed *= -1;
+        }
+        if(ball_pos_x < ball_radius || ball_pos_x > (screenWidth - ball_radius)){
+            X_ball_speed *= -1;
+        }
+        ball_pos_y += GetFrameTime() * Y_ball_speed;
+        ball_pos_x += GetFrameTime() * X_ball_speed;
+
+        BeginDrawing();
+            ClearBackground(RAYWHITE);
+            DrawCircle(ball_pos_x, ball_pos_y, ball_radius, RED);
+        EndDrawing();
     }
 
 
