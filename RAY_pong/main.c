@@ -23,6 +23,8 @@ int main(){
 
 
     Texture pong_logo = LoadTexture("pixilart-drawing.png"); //800 x 450
+    Texture player1_won = LoadTexture("player1won.png");
+    Texture player2_won = LoadTexture("player2won.png");
 
 
     float rec_w = 100.0f;
@@ -39,12 +41,15 @@ int main(){
     float ball_radius = 10.0f;
     float Y_ball_speed = 500.0f;
     float X_ball_speed = 500.0f;
-    float ball_pos_x = (screenWidth /2);
-    float ball_pos_y = (screenHeight /2);
+
+    Vector2 ball_pos = {
+        screenWidth / (float) 2,
+        screenHeight / (float) 2
+    };
 
 
     const float P_width = 20.0f;
-    const float P_height = 120.0f;
+    const float P_height = 200.0f;
 
     const float P_speed = 10.0f;
 
@@ -69,6 +74,9 @@ int main(){
     
     
     while(!WindowShouldClose()){ //start menu
+        if(IsKeyPressed(KEY_ENTER)){
+            break;
+        }
         if(CheckCollisionPointRec(GetMousePosition(), button_start)){
             if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
                 break;
@@ -90,14 +98,35 @@ int main(){
 
     while(!WindowShouldClose()){ //start menu
         
-        if(ball_pos_y < ball_radius || ball_pos_y > (screenHeight - ball_radius)){
+        if(ball_pos.y < ball_radius || ball_pos.y > (screenHeight - ball_radius)){
             Y_ball_speed *= -1;
         }
-        if(ball_pos_x < ball_radius + P_width || ball_pos_x > ((screenWidth - P_width) - ball_radius)){
+        if(ball_pos.x < ball_radius){
+            BeginDrawing();
+                ClearBackground(RAYWHITE);
+                DrawTexture(player2_won, (screenWidth / 2) - (player2_won.width / 2), (screenHeight / 2) - (player2_won.height / 2), WHITE);
+            EndDrawing();
+            WaitTime(5);
+            break;
+        }
+        if(ball_pos.x > (screenWidth - ball_radius)){
+            BeginDrawing();
+                ClearBackground(RAYWHITE);
+                DrawTexture(player1_won, (screenWidth / 2) - (player1_won.width / 2), (screenHeight / 2) - (player1_won.height / 2), WHITE);
+            EndDrawing();
+            WaitTime(5);
+            break;
+        }
+
+
+        if(CheckCollisionCircleRec(ball_pos, ball_radius, Player1)){
             X_ball_speed *= -1;
         }
-        ball_pos_y += GetFrameTime() * Y_ball_speed;
-        ball_pos_x += GetFrameTime() * X_ball_speed;
+        if(CheckCollisionCircleRec(ball_pos, ball_radius, Player2)){
+            X_ball_speed *= -1;
+        }
+        ball_pos.y += GetFrameTime() * Y_ball_speed;
+        ball_pos.x += GetFrameTime() * X_ball_speed;
 
         if(IsKeyDown(KEY_UP)){
             if(Player2.y < 0){
@@ -134,7 +163,7 @@ int main(){
 
         BeginDrawing();
             ClearBackground(RAYWHITE);
-            DrawCircle(ball_pos_x, ball_pos_y, ball_radius, RED);
+            DrawCircle(ball_pos.x, ball_pos.y, ball_radius, RED);
             DrawRectangle(Player1.x, Player1.y, Player1.width, Player1.height, DARKBLUE);
             DrawRectangle(Player2.x, Player2.y, Player2.width, Player2.height, DARKBLUE);
         EndDrawing();
