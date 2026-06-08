@@ -40,7 +40,7 @@ int main(){
 
     float ball_radius = 10.0f;
     float Y_ball_speed = 500.0f;
-    float X_ball_speed = 500.0f;
+    float X_ball_speed = -500.0f;
 
     Vector2 ball_pos = {
         screenWidth / (float) 2,
@@ -70,6 +70,8 @@ int main(){
         P_width, // width
         P_height   // height                             
     };
+
+    const  char *speed_txt = 0;
 
     
     
@@ -106,7 +108,7 @@ int main(){
                 ClearBackground(RAYWHITE);
                 DrawTexture(player2_won, (screenWidth / 2) - (player2_won.width / 2), (screenHeight / 2) - (player2_won.height / 2), WHITE);
             EndDrawing();
-            WaitTime(5);
+            WaitTime(3);
             break;
         }
         if(ball_pos.x > (screenWidth - ball_radius)){
@@ -114,20 +116,21 @@ int main(){
                 ClearBackground(RAYWHITE);
                 DrawTexture(player1_won, (screenWidth / 2) - (player1_won.width / 2), (screenHeight / 2) - (player1_won.height / 2), WHITE);
             EndDrawing();
-            WaitTime(5);
+            WaitTime(3);
             break;
         }
 
+        
 
         if(CheckCollisionCircleRec(ball_pos, ball_radius, Player1)){
-            if(ball_pos.x <= P_width){
-                ball_pos.x = P_width + 1;
+            if((ball_pos.x + ball_radius) <= P_width){
+                ball_pos.x = P_width + 1 + ball_radius;
             }
             X_ball_speed *= -1;
         }
         if(CheckCollisionCircleRec(ball_pos, ball_radius, Player2)){
-            if(ball_pos.x >= (screenWidth - P_width)){
-                ball_pos.x = (screenWidth - P_width) - 1;
+            if((ball_pos.x + ball_radius) >= (screenWidth - P_width)){
+                ball_pos.x = (screenWidth - P_width - ball_radius) - 1;
             }
             X_ball_speed *= -1;
         }
@@ -167,11 +170,29 @@ int main(){
             }
         }
 
+        if(X_ball_speed > 0){
+             X_ball_speed += GetFrameTime() +0.05;
+        }
+        else{
+            X_ball_speed -= GetFrameTime() +0.05;
+        }
+       
+        if(Y_ball_speed > 0){
+             Y_ball_speed += GetFrameTime() +0.05;
+        }
+        else{
+            Y_ball_speed -= GetFrameTime() +0.05;
+        }
+
+        speed_txt = TextFormat("Current X ball speed: %f\nCurrent Y ball speed: %f", X_ball_speed, Y_ball_speed);
+
+
         BeginDrawing();
             ClearBackground(RAYWHITE);
             DrawCircle(ball_pos.x, ball_pos.y, ball_radius, RED);
             DrawRectangle(Player1.x, Player1.y, Player1.width, Player1.height, DARKBLUE);
             DrawRectangle(Player2.x, Player2.y, Player2.width, Player2.height, DARKBLUE);
+            DrawText(speed_txt, 10, 10, 20, BLACK);
         EndDrawing();
     }
 
