@@ -20,6 +20,7 @@ int main(){
 
     SetTargetFPS(60);
 
+    const float Speedup_modifier = 1.5f;
 
 
     Texture pong_logo = LoadTexture("pixilart-drawing.png"); //all 800 x 450 
@@ -61,6 +62,8 @@ int main(){
         70   // height                             
     };
     Color color_start;
+
+    Color speed_text;
 
 
     float ball_radius = 10.0f;
@@ -159,8 +162,15 @@ int main(){
             }
             X_ball_speed *= -1;
         }
-        ball_pos.y += GetFrameTime() * Y_ball_speed;
-        ball_pos.x += GetFrameTime() * X_ball_speed;
+        if(IsKeyDown(KEY_SPACE)){
+            ball_pos.y += GetFrameTime() * Y_ball_speed * Speedup_modifier;
+            ball_pos.x += GetFrameTime() * X_ball_speed * Speedup_modifier;
+        }
+        else{
+            ball_pos.y += GetFrameTime() * Y_ball_speed;
+            ball_pos.x += GetFrameTime() * X_ball_speed;
+        }
+        
 
         if(IsKeyDown(KEY_UP)){
             if(Player2.y < 0){
@@ -208,8 +218,15 @@ int main(){
         else{
             Y_ball_speed -= GetFrameTime() +0.05;
         }
-
-        speed_txt = TextFormat("Current X ball speed: %f\nCurrent Y ball speed: %f", X_ball_speed, Y_ball_speed);
+        if(IsKeyDown(KEY_SPACE)){
+            speed_txt = TextFormat("Current X ball speed: %f\nCurrent Y ball speed: %f", X_ball_speed * Speedup_modifier, Y_ball_speed * Speedup_modifier);
+            speed_text = RED;
+        }
+        else{
+            speed_txt = TextFormat("Current X ball speed: %f\nCurrent Y ball speed: %f\n( press SPACE to speed up! )", X_ball_speed, Y_ball_speed);
+            speed_text = BLACK;
+        }
+        
 
 
         BeginDrawing();
@@ -217,7 +234,7 @@ int main(){
             DrawCircle(ball_pos.x, ball_pos.y, ball_radius, RED);
             DrawRectangle(Player1.x, Player1.y, Player1.width, Player1.height, DARKBLUE);
             DrawRectangle(Player2.x, Player2.y, Player2.width, Player2.height, DARKBLUE);
-            DrawText(speed_txt, 10, 10, 20, BLACK);
+            DrawText(speed_txt, 10, 10, 20, speed_text);
         EndDrawing();
     }
 
