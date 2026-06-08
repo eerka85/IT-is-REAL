@@ -22,16 +22,41 @@ int main(){
 
 
 
-    Texture pong_logo = LoadTexture("pixilart-drawing.png"); //800 x 450
+    Texture pong_logo = LoadTexture("pixilart-drawing.png"); //all 800 x 450 
+    if(!IsTextureValid(pong_logo)){
+        TraceLog(LOG_ERROR, "Failed to load texture: pixilart-drawing.png");
+        UnloadTexture(pong_logo);
+        CloseWindow();
+    }
+    
     Texture player1_won = LoadTexture("player1won.png");
-    Texture player2_won = LoadTexture("player2won.png");
+    if(!IsTextureValid(player1_won)){
+        TraceLog(LOG_ERROR, "Failed to load texture: player1won.png");
+        UnloadTexture(pong_logo);
+        UnloadTexture(player1_won);
+        CloseWindow();
+    }
 
+    Texture player2_won = LoadTexture("player2won.png");
+    if(!IsTextureValid(player2_won)){
+        TraceLog(LOG_ERROR, "Failed to load texture: player2won.png");
+        UnloadTexture(pong_logo);
+        UnloadTexture(player1_won);
+        UnloadTexture(player2_won);
+        CloseWindow();
+    }
+    
+    float scale = screenWidth / pong_logo.width;
+
+    Vector2 texture_pos = {
+        (float)(screenWidth / 2) - ((pong_logo.width * scale) / 2),
+        (float)(screenHeight / 2) - ((pong_logo.height * scale) / 2)
+    };
 
     float rec_w = 100.0f;
-    float rec_gap = 20.0f; //20 is the gap between the PONG and button
     Rectangle button_start = { 
         (screenWidth / 2) - (rec_w / 2), //half of width 
-        ((screenHeight / 2) - (pong_logo.height / 2)) + pong_logo.height + rec_gap, 
+        ((screenHeight / 2) + ((pong_logo.height * scale) / 2)) - 200, 
         100, // width
         70   // height                             
     };
@@ -90,7 +115,7 @@ int main(){
         }
         BeginDrawing();
             ClearBackground(RAYWHITE);
-            DrawTexture(pong_logo, (screenWidth / 2) - (pong_logo.width / 2), (screenHeight / 2) - (pong_logo.height / 2), WHITE);
+            DrawTextureEx(pong_logo, texture_pos, 0, scale, WHITE);
             draw_rec_but_txt(button_start, "PLAY", 20, color_start);
         EndDrawing();
 
@@ -106,7 +131,7 @@ int main(){
         if(ball_pos.x < ball_radius){
             BeginDrawing();
                 ClearBackground(RAYWHITE);
-                DrawTexture(player2_won, (screenWidth / 2) - (player2_won.width / 2), (screenHeight / 2) - (player2_won.height / 2), WHITE);
+                DrawTextureEx(player2_won, texture_pos, 0, scale, WHITE);
             EndDrawing();
             WaitTime(3);
             break;
@@ -114,7 +139,7 @@ int main(){
         if(ball_pos.x > (screenWidth - ball_radius)){
             BeginDrawing();
                 ClearBackground(RAYWHITE);
-                DrawTexture(player1_won, (screenWidth / 2) - (player1_won.width / 2), (screenHeight / 2) - (player1_won.height / 2), WHITE);
+                DrawTextureEx(player1_won, texture_pos, 0, scale, WHITE);
             EndDrawing();
             WaitTime(3);
             break;
@@ -124,13 +149,13 @@ int main(){
 
         if(CheckCollisionCircleRec(ball_pos, ball_radius, Player1)){
             if((ball_pos.x + ball_radius) <= P_width){
-                ball_pos.x = P_width + 1 + ball_radius;
+                ball_pos.x = P_width + 5 + ball_radius; //idikkkkdkkk
             }
             X_ball_speed *= -1;
         }
         if(CheckCollisionCircleRec(ball_pos, ball_radius, Player2)){
             if((ball_pos.x + ball_radius) >= (screenWidth - P_width)){
-                ball_pos.x = (screenWidth - P_width - ball_radius) - 1;
+                ball_pos.x = (screenWidth - P_width - ball_radius) - 5;
             }
             X_ball_speed *= -1;
         }
