@@ -107,10 +107,12 @@ int main(){
     
     
     while(!WindowShouldClose()){ //start menu
-        ball_pos.x = screenWidth / (float) 2;
+        ball_pos.x = screenWidth / (float) 2; //RESET
         ball_pos.y = screenHeight / (float) 2;
         X_ball_speed = -500.0f;
         Y_ball_speed = 500.0f;
+        Player1.y = (screenHeight /2) - (P_height /2);
+        Player2.y = (screenHeight /2) - (P_height /2);
         while(1){
             if(WindowShouldClose()){
                 UnloadTexture(pong_logo);
@@ -141,7 +143,7 @@ int main(){
 
         HideCursor();
 
-        while(1){ //start menu
+        while(1){ 
             if(WindowShouldClose()){
                 UnloadTexture(pong_logo);
                 UnloadTexture(player1_won);
