@@ -63,7 +63,7 @@ int main(){
     };
     Color color_start;
 
-    Color speed_text;
+    Color color_speed;
 
 
     const float ball_radius = 10.0f;
@@ -99,9 +99,11 @@ int main(){
         P_height   // height                             
     };
 
-    const  char *speed_txt = 0;
-    const  char *score_txt = 0;
-
+    const char *speed_txt;
+    const char *score_txt;
+    int P1_score = 0;
+    int P2_score = 0;
+    Color color_score = BLACK;
     
     
     while(!WindowShouldClose()){ //start menu
@@ -155,6 +157,10 @@ int main(){
                     ClearBackground(RAYWHITE);
                     DrawTextureEx(player2_won, texture_pos, 0, scale, WHITE);
                 EndDrawing();
+                P2_score++;
+                if(P2_score>=P1_score){
+                    color_score = GREEN;
+                }
                 WaitTime(3);
                 break;
             }
@@ -163,6 +169,10 @@ int main(){
                     ClearBackground(RAYWHITE);
                     DrawTextureEx(player1_won, texture_pos, 0, scale, WHITE);
                 EndDrawing();
+                P1_score++;
+                if(P1_score>=P2_score){
+                    color_score = BLUE;
+                }
                 WaitTime(3);
                 break;
             }
@@ -239,25 +249,25 @@ int main(){
             }
             if(IsKeyDown(KEY_SPACE)){
                 speed_txt = TextFormat("Current X ball speed: %f\nCurrent Y ball speed: %f", X_ball_speed * Speedup_modifier, Y_ball_speed * Speedup_modifier);
-                speed_text = RED;
+                color_speed = RED;
             }
             else{
                 speed_txt = TextFormat("Current X ball speed: %f\nCurrent Y ball speed: %f\n( press SPACE to speed up! )", X_ball_speed, Y_ball_speed);
-                speed_text = BLACK;
+                color_speed = BLACK;
             }
-            
+            score_txt = TextFormat("Player 1: %d     Player 2: %d", P1_score, P2_score);            
 
 
             BeginDrawing();
                 ClearBackground(RAYWHITE);
                 DrawCircle(ball_pos.x, ball_pos.y, ball_radius, RED);
                 DrawRectangle(Player1.x, Player1.y, Player1.width, Player1.height, DARKBLUE);
-                DrawRectangle(Player2.x, Player2.y, Player2.width, Player2.height, DARKBLUE);
-                DrawText(speed_txt, 10, 10, 20, speed_text);
-                DrawText("Press ESC to close", 2 ,screenHeight - 20, 20, BLACK);
+                DrawRectangle(Player2.x, Player2.y, Player2.width, Player2.height, DARKGREEN);
+                DrawText(speed_txt, 10, 10, 20, color_speed);
+                DrawText(score_txt, ((screenWidth / 2) - (MeasureText(score_txt, 20))), 10, 20, color_score);
+                DrawText("Press ESC to close", 10 ,screenHeight - 20, 20, BLACK);
             EndDrawing();
         }
-
         ShowCursor();
 
     }
