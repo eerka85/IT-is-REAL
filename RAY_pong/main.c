@@ -47,14 +47,14 @@ int main(){
         CloseWindow();
     }
     
-    float scale = screenWidth / pong_logo.width;
+    const float scale = screenWidth / pong_logo.width;
 
     Vector2 texture_pos = {
         (float)(screenWidth / 2) - ((pong_logo.width * scale) / 2),
         (float)(screenHeight / 2) - ((pong_logo.height * scale) / 2)
     };
 
-    float rec_w = 100.0f;
+    const float rec_w = 100.0f;
     Rectangle button_start = { 
         (screenWidth / 2) - (rec_w / 2), //half of width 
         ((screenHeight / 2) + ((pong_logo.height * scale) / 2)) - 200, 
@@ -66,7 +66,7 @@ int main(){
     Color speed_text;
 
 
-    float ball_radius = 10.0f;
+    const float ball_radius = 10.0f;
     float Y_ball_speed = 500.0f;
     float X_ball_speed = -500.0f;
 
@@ -100,143 +100,169 @@ int main(){
     };
 
     const  char *speed_txt = 0;
+    const  char *score_txt = 0;
 
     
     
     while(!WindowShouldClose()){ //start menu
-        if(IsKeyPressed(KEY_ENTER)){
-            break;
-        }
-        if(CheckCollisionPointRec(GetMousePosition(), button_start)){
-            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+        ball_pos.x = screenWidth / (float) 2;
+        ball_pos.y = screenHeight / (float) 2;
+        X_ball_speed = -500.0f;
+        Y_ball_speed = 500.0f;
+        while(1){
+            if(WindowShouldClose()){
+                UnloadTexture(pong_logo);
+                UnloadTexture(player1_won);
+                UnloadTexture(player2_won);
+                CloseWindow();
+                exit(0);
+            }
+            if(IsKeyPressed(KEY_ENTER)){
                 break;
             }
-            color_start = GRAY;
+            if(CheckCollisionPointRec(GetMousePosition(), button_start)){
+                if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    break;
+                }
+                color_start = GRAY;
+            }
+            else{
+                color_start = BLUE;
+            }
+            BeginDrawing();
+                ClearBackground(RAYWHITE);
+                DrawTextureEx(pong_logo, texture_pos, 0, scale, WHITE);
+                draw_rec_but_txt(button_start, "PLAY", 20, color_start);
+                DrawText("Press ESC to close", 2 ,screenHeight - 20, 20, BLACK);
+            EndDrawing();
         }
-        else{
-            color_start = BLUE;
+
+        HideCursor();
+
+        while(1){ //start menu
+            if(WindowShouldClose()){
+                UnloadTexture(pong_logo);
+                UnloadTexture(player1_won);
+                UnloadTexture(player2_won);
+                CloseWindow();
+                exit(0);
+            }
+            if(ball_pos.y < ball_radius || ball_pos.y > (screenHeight - ball_radius)){
+                Y_ball_speed *= -1;
+            }
+            if(ball_pos.x < ball_radius){
+                BeginDrawing();
+                    ClearBackground(RAYWHITE);
+                    DrawTextureEx(player2_won, texture_pos, 0, scale, WHITE);
+                EndDrawing();
+                WaitTime(3);
+                break;
+            }
+            if(ball_pos.x > (screenWidth - ball_radius)){
+                BeginDrawing();
+                    ClearBackground(RAYWHITE);
+                    DrawTextureEx(player1_won, texture_pos, 0, scale, WHITE);
+                EndDrawing();
+                WaitTime(3);
+                break;
+            }
+
+            
+
+            if(CheckCollisionCircleRec(ball_pos, ball_radius, Player1)){
+                if((ball_pos.x + ball_radius) <= P_width){
+                    ball_pos.x = P_width + 5 + ball_radius; //idikkkkdkkk
+                }
+                X_ball_speed *= -1;
+            }
+            if(CheckCollisionCircleRec(ball_pos, ball_radius, Player2)){
+                if((ball_pos.x + ball_radius) >= (screenWidth - P_width)){
+                    ball_pos.x = (screenWidth - P_width - ball_radius) - 5;
+                }
+                X_ball_speed *= -1;
+            }
+            if(IsKeyDown(KEY_SPACE)){
+                ball_pos.y += GetFrameTime() * Y_ball_speed * Speedup_modifier;
+                ball_pos.x += GetFrameTime() * X_ball_speed * Speedup_modifier;
+            }
+            else{
+                ball_pos.y += GetFrameTime() * Y_ball_speed;
+                ball_pos.x += GetFrameTime() * X_ball_speed;
+            }
+            
+
+            if(IsKeyDown(KEY_UP)){
+                if(Player2.y < 0){
+
+                }
+                else{
+                    Player2.y -= P_speed;
+                }
+            }
+            if(IsKeyDown(KEY_DOWN)){
+                if(Player2.y > (screenHeight - P_height)){
+
+                }
+                else{
+                    Player2.y += P_speed;
+                }
+            }
+
+            if(IsKeyDown(KEY_W)){
+                if(Player1.y < 0){
+
+                }
+                else{
+                    Player1.y -= P_speed;
+                }
+            }
+            if(IsKeyDown(KEY_S)){
+                if(Player1.y > (screenHeight - P_height)){
+                }
+                else{
+                    Player1.y += P_speed;
+                }
+            }
+
+            if(X_ball_speed > 0){
+                X_ball_speed += GetFrameTime() +0.05;
+            }
+            else{
+                X_ball_speed -= GetFrameTime() +0.05;
+            }
+        
+            if(Y_ball_speed > 0){
+                Y_ball_speed += GetFrameTime() +0.05;
+            }
+            else{
+                Y_ball_speed -= GetFrameTime() +0.05;
+            }
+            if(IsKeyDown(KEY_SPACE)){
+                speed_txt = TextFormat("Current X ball speed: %f\nCurrent Y ball speed: %f", X_ball_speed * Speedup_modifier, Y_ball_speed * Speedup_modifier);
+                speed_text = RED;
+            }
+            else{
+                speed_txt = TextFormat("Current X ball speed: %f\nCurrent Y ball speed: %f\n( press SPACE to speed up! )", X_ball_speed, Y_ball_speed);
+                speed_text = BLACK;
+            }
+            
+
+
+            BeginDrawing();
+                ClearBackground(RAYWHITE);
+                DrawCircle(ball_pos.x, ball_pos.y, ball_radius, RED);
+                DrawRectangle(Player1.x, Player1.y, Player1.width, Player1.height, DARKBLUE);
+                DrawRectangle(Player2.x, Player2.y, Player2.width, Player2.height, DARKBLUE);
+                DrawText(speed_txt, 10, 10, 20, speed_text);
+                DrawText("Press ESC to close", 2 ,screenHeight - 20, 20, BLACK);
+            EndDrawing();
         }
-        BeginDrawing();
-            ClearBackground(RAYWHITE);
-            DrawTextureEx(pong_logo, texture_pos, 0, scale, WHITE);
-            draw_rec_but_txt(button_start, "PLAY", 20, color_start);
-        EndDrawing();
+
+        ShowCursor();
 
     }
 
-    HideCursor();
-
-    while(!WindowShouldClose()){ //start menu
-        
-        if(ball_pos.y < ball_radius || ball_pos.y > (screenHeight - ball_radius)){
-            Y_ball_speed *= -1;
-        }
-        if(ball_pos.x < ball_radius){
-            BeginDrawing();
-                ClearBackground(RAYWHITE);
-                DrawTextureEx(player2_won, texture_pos, 0, scale, WHITE);
-            EndDrawing();
-            WaitTime(3);
-            break;
-        }
-        if(ball_pos.x > (screenWidth - ball_radius)){
-            BeginDrawing();
-                ClearBackground(RAYWHITE);
-                DrawTextureEx(player1_won, texture_pos, 0, scale, WHITE);
-            EndDrawing();
-            WaitTime(3);
-            break;
-        }
-
-        
-
-        if(CheckCollisionCircleRec(ball_pos, ball_radius, Player1)){
-            if((ball_pos.x + ball_radius) <= P_width){
-                ball_pos.x = P_width + 5 + ball_radius; //idikkkkdkkk
-            }
-            X_ball_speed *= -1;
-        }
-        if(CheckCollisionCircleRec(ball_pos, ball_radius, Player2)){
-            if((ball_pos.x + ball_radius) >= (screenWidth - P_width)){
-                ball_pos.x = (screenWidth - P_width - ball_radius) - 5;
-            }
-            X_ball_speed *= -1;
-        }
-        if(IsKeyDown(KEY_SPACE)){
-            ball_pos.y += GetFrameTime() * Y_ball_speed * Speedup_modifier;
-            ball_pos.x += GetFrameTime() * X_ball_speed * Speedup_modifier;
-        }
-        else{
-            ball_pos.y += GetFrameTime() * Y_ball_speed;
-            ball_pos.x += GetFrameTime() * X_ball_speed;
-        }
-        
-
-        if(IsKeyDown(KEY_UP)){
-            if(Player2.y < 0){
-
-            }
-            else{
-                Player2.y -= P_speed;
-            }
-        }
-        if(IsKeyDown(KEY_DOWN)){
-            if(Player2.y > (screenHeight - P_height)){
-
-            }
-            else{
-                Player2.y += P_speed;
-            }
-        }
-
-        if(IsKeyDown(KEY_W)){
-            if(Player1.y < 0){
-
-            }
-            else{
-                Player1.y -= P_speed;
-            }
-        }
-        if(IsKeyDown(KEY_S)){
-            if(Player1.y > (screenHeight - P_height)){
-            }
-            else{
-                Player1.y += P_speed;
-            }
-        }
-
-        if(X_ball_speed > 0){
-             X_ball_speed += GetFrameTime() +0.05;
-        }
-        else{
-            X_ball_speed -= GetFrameTime() +0.05;
-        }
-       
-        if(Y_ball_speed > 0){
-             Y_ball_speed += GetFrameTime() +0.05;
-        }
-        else{
-            Y_ball_speed -= GetFrameTime() +0.05;
-        }
-        if(IsKeyDown(KEY_SPACE)){
-            speed_txt = TextFormat("Current X ball speed: %f\nCurrent Y ball speed: %f", X_ball_speed * Speedup_modifier, Y_ball_speed * Speedup_modifier);
-            speed_text = RED;
-        }
-        else{
-            speed_txt = TextFormat("Current X ball speed: %f\nCurrent Y ball speed: %f\n( press SPACE to speed up! )", X_ball_speed, Y_ball_speed);
-            speed_text = BLACK;
-        }
-        
-
-
-        BeginDrawing();
-            ClearBackground(RAYWHITE);
-            DrawCircle(ball_pos.x, ball_pos.y, ball_radius, RED);
-            DrawRectangle(Player1.x, Player1.y, Player1.width, Player1.height, DARKBLUE);
-            DrawRectangle(Player2.x, Player2.y, Player2.width, Player2.height, DARKBLUE);
-            DrawText(speed_txt, 10, 10, 20, speed_text);
-        EndDrawing();
-    }
+    
 
     UnloadTexture(pong_logo);
     UnloadTexture(player1_won);
