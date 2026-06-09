@@ -182,15 +182,11 @@ int main(){
             
 
             if(CheckCollisionCircleRec(ball_pos, ball_radius, Player1)){
-                if((ball_pos.x + ball_radius) <= P_width){
-                    ball_pos.x = P_width + 5 + ball_radius; //idikkkkdkkk
-                }
+                ball_pos.x = P_width + 5 + ball_radius; //idikkkkdkkk
                 X_ball_speed *= -1;
             }
             if(CheckCollisionCircleRec(ball_pos, ball_radius, Player2)){
-                if((ball_pos.x + ball_radius) >= (screenWidth - P_width)){
-                    ball_pos.x = (screenWidth - P_width - ball_radius) - 5;
-                }
+                ball_pos.x = (screenWidth - P_width - ball_radius) - 5;
                 X_ball_speed *= -1;
             }
             if(IsKeyDown(KEY_SPACE)){
@@ -266,7 +262,7 @@ int main(){
                 DrawRectangle(Player1.x, Player1.y, Player1.width, Player1.height, DARKBLUE);
                 DrawRectangle(Player2.x, Player2.y, Player2.width, Player2.height, DARKGREEN);
                 DrawText(speed_txt, 10, 10, 20, color_speed);
-                DrawText(score_txt, ((screenWidth / 2) - (MeasureText(score_txt, 20))), 10, 20, color_score);
+                DrawText(score_txt, ((screenWidth / 2) - (MeasureText(score_txt, 20) / 2)), 10, 20, color_score);
                 DrawText("Press ESC to close", 10 ,screenHeight - 20, 20, BLACK);
             EndDrawing();
         }
