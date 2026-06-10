@@ -3,6 +3,8 @@
 #include <conio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <windows.h>
+#include <mmsystem.h> 
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -13,8 +15,15 @@
 #define ANSI_COLOR_WHITE   "\x1b[37m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
+void del_screen();
 
 int main(){
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);//ai schovani kurzoru
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = FALSE; 
+    SetConsoleCursorInfo(out, &cursorInfo);
+
     int input = 0;
     bool is_prefix = false;
     int U_poz = 0;
@@ -26,8 +35,7 @@ int main(){
     strcpy(menu[2], "moznost 3");
     strcpy(menu[3], "moznost 4");
     
-
-    
+    system("cls");    
 
     do{
         is_prefix = false;
@@ -54,6 +62,29 @@ int main(){
             }
         }
 
+        if(input == 13){
+            switch(U_poz){
+                case 0:
+                    exit(0);
+                break;
+                case 1:
+                    PlaySound("aehm.wav", NULL, SND_FILENAME | SND_SYNC);
+                break;
+                case 2:
+                    PlaySound("Alert.wav", NULL, SND_FILENAME | SND_SYNC);
+                break;
+                case 3:
+                    PlaySound("Lasershot.wav", NULL, SND_FILENAME | SND_SYNC);
+                break;
+                default:
+                    perror("switch wha?");
+                    return 1;
+                break;
+            }
+        }
+        
+        del_screen();
+
         for(int i = 0; i<velikost; i++){
             if(i == U_poz){
                 printf(ANSI_COLOR_RED "%s\n", menu[i], ANSI_COLOR_RESET);
@@ -66,6 +97,12 @@ int main(){
 
 
 
-    }while (input != 97);
+    }while (input != 27);
     return 0;
+}
+void del_screen(){
+	COORD cursorPosition;// ts is highkey ai
+    cursorPosition.X = 0;
+    cursorPosition.Y = 0;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPosition);
 }
