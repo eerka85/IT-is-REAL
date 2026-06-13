@@ -3,7 +3,6 @@
 #include <string.h>
 #include <windows.h>
 #include <conio.h> //kbhit
-#include <windows.h>
 #include <sys/time.h> //master milisekunf
 #include <stdbool.h>
 //Cau verco jestli se sem koukas :)

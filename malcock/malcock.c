@@ -35,7 +35,7 @@ int main(){
             break;
             case 1:
                 printf("\nzadej hodontu: ");
-                *(pole + a) = input_int(0, 2147483647);
+                *(pole + a) = input_int(0, INT_MAX);
 
                 printf("\ntisk pole\n");
                 for(int i = 0; i<a+1; i++){
