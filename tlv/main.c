@@ -11,33 +11,31 @@ void clear_screen_CONTINUE();
 int input_int(int min, int max);
 int input_string(char nacteny_str[], int velikost, char vypis[]);
 void exit_my();
-int write_tlv();
 
 int main(){
+    char main_buffer[1024];
+    char * inputed_cmd_tok;
+    char * inputed_key_tok;
+    int inputed_key = 0;
+    char * inputed_type_tok;
+    char * inputed_value_tok;
     while(1){
-        printf(" ===MAIN MENU===\n 0 = end\n 1 = create a new tlv\n 2 = read tvl\n 3 = save? idk tbh\n");
-        int volba = input_int(0, 3);
-        switch(volba){
-            case 0:
-                exit_my();
-            break;
+        input_string(main_buffer, sizeof(main_buffer), "==TLV HELP==\nfirst write command: init/check/write THEN SPACE\nsecond write your key (you will use this to acces data) THEN SPACE\nif using init or write (third write type: int/double/string THEN ;\nforth ou write the value)  WRITE: ");
+        inputed_cmd_tok = strtok(main_buffer, " ");
+        inputed_key_tok = strtok(NULL, " ");
+        inputed_key = atoi(inputed_key_tok);
 
-            case 1:
-                if(write_tlv() != 0){
-                    printf(" write_tlv YOURE A DUMBAHH\n");
-                }
-            break;
+        if(strcmmp(inputed_cmd_tok, "init") == 0){
 
-            case 2:
-                printf("WIP");
-            break;
+        }
+        else if(strcmmp(inputed_cmd_tok, "check") == 0){
 
-            case 3:
-                printf("WIP");
-            break;
+        }
+        else if(strcmmp(inputed_cmd_tok, "write") == 0){
 
-            default:
-            break;
+        }
+        else{
+            printf("cmd is wrong");
         }
         clear_screen_CONTINUE();
     }
@@ -52,7 +50,7 @@ int write_tlv(){
     char * inputed_type_tok;
     char * inputed_value_tok;
 
-    input_string(main_buffer, sizeof(main_buffer), " ===TLV CREATION===\n please input in [type];[value] format\n (avalible types: 01 = NUMBER, 02 = DOUBLE(idk jak popsat? fraction?), 03 = WORDS\n WRITE: "); 
+    input_string(main_buffer, sizeof(main_buffer), " ===TLV CREATION===\n "); 
 
     inputed_type_tok = strtok(main_buffer, ";");
     if(strcmp(inputed_type_tok, "01") == 0){
