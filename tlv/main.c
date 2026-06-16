@@ -16,26 +16,44 @@ int main(){
     char main_buffer[1024];
     char * inputed_cmd_tok;
     char * inputed_key_tok;
-    int inputed_key = 0;
     char * inputed_type_tok;
     char * inputed_value_tok;
+    int value_lenght = 0;
+    int * key_rn;
     while(1){
-        input_string(main_buffer, sizeof(main_buffer), "==TLV HELP==\nfirst write command: init/check/write THEN SPACE\nsecond write your key (you will use this to acces data) THEN SPACE\nif using init or write (third write type: int/double/string THEN ;\nforth ou write the value)  WRITE: ");
+        input_string(main_buffer, sizeof(main_buffer), "==TLV HELP==\nfirst write command: init/check/write THEN SPACE\nif using init skip this (second write your key (you will use this to acces data) THEN SPACE)\nif using init or write (third write type: int/double/string THEN ;\nforth ou write the value)  WRITE: ");
         inputed_cmd_tok = strtok(main_buffer, " ");
-        inputed_key_tok = strtok(NULL, " ");
-        inputed_key = atoi(inputed_key_tok);
+        if(strcmp(inputed_cmd_tok, "init") == 0){
+            inputed_type_tok = strtok(NULL, ";");
+            inputed_value_tok = strtok(NULL, "\n");
+            value_lenght = strlen(inputed_value_tok);            
+            if(strcmp(inputed_type_tok, "int") == 0){
+                key_rn = malloc(2 * sizeof(int) + value_lenght * sizeof(char));
+                *key_rn = 1;
+                *(key_rn +1) = value_lenght;
+                int inputed_int = atoi(inputed_value_tok);
+                *(key_rn +2) = input_int;
 
-        if(strcmmp(inputed_cmd_tok, "init") == 0){
+            }
+            else if(strcmp(inputed_type_tok, "double") == 0){
 
+            }
+            else if(strcmp(inputed_type_tok, "string") == 0){
+
+            }
+            else{
+                printf("type is wrong\n");
+            }
         }
-        else if(strcmmp(inputed_cmd_tok, "check") == 0){
+        else if(strcmp(inputed_cmd_tok, "check") == 0){
+        inputed_key_tok = strtok(NULL, " ");
 
         }
         else if(strcmmp(inputed_cmd_tok, "write") == 0){
 
         }
         else{
-            printf("cmd is wrong");
+            printf("cmd is wrong\n");
         }
         clear_screen_CONTINUE();
     }
@@ -43,33 +61,6 @@ int main(){
 }
 void exit_my(){
     exit(0);
-}
-
-int write_tlv(){
-    char main_buffer[1024] = {0};
-    char * inputed_type_tok;
-    char * inputed_value_tok;
-
-    input_string(main_buffer, sizeof(main_buffer), " ===TLV CREATION===\n "); 
-
-    inputed_type_tok = strtok(main_buffer, ";");
-    if(strcmp(inputed_type_tok, "01") == 0){
-        printf(" JEDNICKAAA\n");
-    }
-    else if(strcmp(inputed_type_tok, "02") == 0){
-        printf(" DVAAAAAAAAAA\n");
-    }
-    else if(strcmp(inputed_type_tok, "03") == 0){
-        printf(" TRIIIIIIIII\n");
-    }
-    else{
-        printf(" ##couldnt recognize type##\n");
-        return 1;
-    }
-
-    
-
-    return 0;
 }
 
 void clean_buffer(){
