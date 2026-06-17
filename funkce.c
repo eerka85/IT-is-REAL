@@ -13,14 +13,7 @@
 #define WHITE   "\x1b[37m"
 #define RESET   "\x1b[0m"
 
-int kets(){
-    int klavesa = _getch();
-    if(klavesa == 0 || klavesa == 224){
-        klavesa = _getch();
-    }
-    return klavesa;
-}
-
+int kets();
 void clean_buffer();
 int input_int(int min, int max);
 int input_string(char nacteny_str[], int velikost,char vypis[]);
@@ -56,6 +49,14 @@ int input_int(int min, int max) {
 			return tmp;
 		}
 	}
+}
+
+int kets(){
+    int klavesa = _getch();
+    if(klavesa == 0 || klavesa == 224){
+        klavesa = _getch();
+    }
+    return klavesa;
 }
 
 int input_string(char nacteny_str[], int velikost, char vypis[]){

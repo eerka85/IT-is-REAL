@@ -127,28 +127,28 @@ int main(){
 
             case STAV_CRAFT:
                 system("cls");
-                printf("craft");
+                printf(" craft");
                 aktualnistav = STAV_MENU;
                 clear_screen_CONTINUE();
             break;
 
             case STAV_MINE:
                 system("cls");
-                printf("mine");
+                printf(" mine");
                 aktualnistav = STAV_MENU;
                 clear_screen_CONTINUE();
             break;
 
             case STAV_FIGHT:
                 system("cls");
-                printf("fight");
+                printf(" fight");
                 aktualnistav = STAV_MENU;
                 clear_screen_CONTINUE();
             break;
 
             case STAV_BOSS:
                 system("cls");
-                printf("boss");
+                printf(" boss");
                 aktualnistav = STAV_MENU;
                 clear_screen_CONTINUE();
             break;
