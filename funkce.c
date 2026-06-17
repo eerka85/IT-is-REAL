@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
+#include <conio.h>
 
 #define RED     "\x1b[31m"
 #define GREEN   "\x1b[32m"
@@ -11,6 +12,14 @@
 #define CYAN    "\x1b[36m"
 #define WHITE   "\x1b[37m"
 #define RESET   "\x1b[0m"
+
+int kets(){
+    int klavesa = _getch();
+    if(klavesa == 0 || klavesa == 224){
+        klavesa = _getch();
+    }
+    return klavesa;
+}
 
 void clean_buffer();
 int input_int(int min, int max);
@@ -77,5 +86,5 @@ void del_screen_cursor(){
 void clear_screen_CONTINUE(){
 	printf(BLUE "\n CONTINUE? (press enter)" RESET);
 	getchar();
-	printf("\033[H\033[2J");
+	system("cls");
 }

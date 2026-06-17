@@ -32,7 +32,7 @@ int main(){
                 *key_rn = 1;
                 *(key_rn +1) = value_lenght;
                 int inputed_int = atoi(inputed_value_tok);
-                *(key_rn +2) = input_int;
+                *(key_rn +2) = inputed_int;
 
             }
             else if(strcmp(inputed_type_tok, "double") == 0){
@@ -49,7 +49,7 @@ int main(){
         inputed_key_tok = strtok(NULL, " ");
 
         }
-        else if(strcmmp(inputed_cmd_tok, "write") == 0){
+        else if(strcmp(inputed_cmd_tok, "write") == 0){
 
         }
         else{
